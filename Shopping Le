@@ -1,0 +1,96 @@
+import requests
+
+#Microsoft Semantic Kernel AI service endpoint and subscription key
+service_endpoint = "YOUR_SERVICE_ENDPOINT"
+subscription_key = "YOUR_SUBSCRIPTION_KEY"
+
+def main():
+    print("Shopping Le")
+    print("1. Feeling Lazy")
+    print("2. Active Today")
+
+    choice = input("Choose an option (1/2): ")
+
+    if choice == '1':
+        feeling_lazy()
+    elif choice == '2':
+        active_today()
+    else:
+        print("Invalid choice. Please choose 1 or 2.")
+
+def feeling_lazy():
+    print("Feeling Lazy")
+    print("1. Food Restaurant")
+    print("2. Suggestion")
+
+    choice = input("Choose an option (1/2): ")
+
+    if choice == '1':
+        food_restaurant()
+    elif choice == '2':
+        user_input = input("Describe your mood or what you feel like doing: ")
+        suggestion = get_semantic_suggestion(user_input)
+        print("Semantic AI Suggestion:", suggestion)
+    else:
+        print("Invalid choice. Please choose 1 or 2.")
+
+def food_restaurant():
+    user_input = input("Describe your food craving or what type of cuisine you're in the mood for: ")
+    restaurant_suggestion = get_semantic_restaurant_suggestion(user_input)
+    print("Semantic AI Restaurant Suggestion:", restaurant_suggestion)
+
+def get_semantic_suggestion(user_input):
+    # Use Microsoft Semantic Kernel AI to generate a suggestion based on the user's input
+    headers = {
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": subscription_key
+    }
+
+    data = {
+        "user_input": user_input
+    }
+
+    response = requests.post(service_endpoint + "/suggestion", json=data, headers=headers)
+    suggestion = response.json().get("suggestion", "No suggestion available")
+    return suggestion
+
+def get_semantic_restaurant_suggestion(user_input):
+    # Use Microsoft Semantic Kernel AI to generate a restaurant suggestion based on the user's input
+    headers = {
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": subscription_key
+    }
+
+    data = {
+        "user_input": user_input
+    }
+
+    response = requests.post(service_endpoint + "/restaurant", json=data, headers=headers)
+    restaurant_suggestion = response.json().get("restaurant_suggestion", "No restaurant suggestion available")
+    return restaurant_suggestion
+
+def active_today():
+    print("Active Today")
+    description = input("Write a description of your activity today: ")
+    ingredients = get_semantic_related_ingredients(description)
+    print("Semantic AI Related Ingredients:")
+    for ingredient in ingredients:
+        print("- " + ingredient)
+
+def get_semantic_related_ingredients(description):
+    # Use Microsoft Semantic Kernel AI to find ingredients related to the user's activity description
+    headers = {
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": subscription_key
+    }
+
+    data = {
+        "description": description
+    }
+
+    response = requests.post(service_endpoint + "/ingredients", json=data, headers=headers)
+    ingredients = response.json().get("ingredients", ["No related ingredients found"])
+    return ingredients
+
+if __name__ == "__main__":
+    main()
